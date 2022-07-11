@@ -47,23 +47,26 @@ def main(x_resolution = None):
     print(voxel_scale_ls)
 
     for y in range(y_res):
-        y += 0.5
+        # y += 0.5
         v_value = 1 / y_res * y
-        for x in range(x_res):
-            x += 0.5
-            u_value = 1 / x_res * x
-            world_position = pm.pointOnSurface(img_plane, u = u_value, v = v_value)
-            rgb_value_ls = pm.colorAtPoint(file_node, output = 'RGB', u = u_value, v = v_value)
-            # invert color value
-            rgb_value_ls = [1 - val for val in rgb_value_ls]
-            color_scale_ls = get_color_scale(voxel_scale_ls, rgb_value_ls)
-            voxel_group = pm.group(name = 'voxel_group', empty = True)
-            voxel = pm.polyCube()[0]
-            pm.parent(voxel, voxel_group)
-            voxel_group.translate.set(world_position)
-            voxel_group.scale.set(voxel_scale_ls)
-            voxel.scale.set(rgb_value_ls)
-            pm.parent(voxel_group, parent_group)
+        if 0 < v_value < 1:
+            for x in range(x_res):
+                # x += 0.5
+                u_value = 1 / x_res * x
+                if 0 < u_value < 1:
+                    u_value = 1 / x_res * x
+                    world_position = pm.pointOnSurface(img_plane, u = u_value, v = v_value)
+                    rgb_value_ls = pm.colorAtPoint(file_node, output = 'RGB', u = u_value, v = v_value)
+                    # invert color value
+                    rgb_value_ls = [1 - val for val in rgb_value_ls]
+                    color_scale_ls = get_color_scale(voxel_scale_ls, rgb_value_ls)
+                    voxel_group = pm.group(name = 'voxel_group', empty = True)
+                    voxel = pm.polyCube()[0]
+                    pm.parent(voxel, voxel_group)
+                    voxel_group.translate.set(world_position)
+                    voxel_group.scale.set(voxel_scale_ls)
+                    voxel.scale.set(rgb_value_ls)
+                    pm.parent(voxel_group, parent_group)
 
 if __name__ == '__main__':
     main()
